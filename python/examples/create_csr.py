@@ -101,7 +101,7 @@ def info(iface='hid', device='ecc', **kwargs):
             setattr(icfg, k, int(v, 16))
 
     # Basic Raspberry Pi I2C check
-    if 'i2c' == iface and check_if_rpi():
+    if 'i2c' == iface and (check_if_rpi() or check_if_bbb()):
         cfg.cfg.atcai2c.bus = 1
 
     # Initialize the stack
@@ -110,7 +110,7 @@ def info(iface='hid', device='ecc', **kwargs):
 
     # Load the device serial number
     sernum = bytearray(9)
-    assert 0 == atcab_read_serial_number(sernum)
+    assert ATCA_SUCCESS == atcab_read_serial_number(sernum)
     sernum = ''.join(['%02X' % n for n in sernum])
 
     # Create the Certificate Subject Name
@@ -152,7 +152,11 @@ def info(iface='hid', device='ecc', **kwargs):
     # Create a CSR based on the definition provided
     csr = bytearray(len(atcacert_def_csr_template)+8)
     csr_size = AtcaReference(len(csr))
-    assert 0 == atcacert_create_csr(csr_def, csr, csr_size)
+    assert ATCA_SUCCESS = atcacert_create_csr(csr_def, csr, csr_size)
+
+    # int result = atcacert_create_csr(csr_def, csr, csr_size)
+    # print('result: {}'.format(hex(result)))
+    # assert ATCA_SUCCESS == result
 
     # Encode the CSR in the expect format (PEM)
     csr_pem = base64.b64encode(csr).decode('ascii')
@@ -171,13 +175,3 @@ if __name__ == '__main__':
 
     info(args.iface, args.device, **parse_interface_params(args.params))
     print('\nDone')
-
-
-
-
-
-
-
-
-
-

@@ -61,7 +61,7 @@ try: input = raw_input
 except NameError: pass
 
 
-def configure_device(iface='hid', device='ecc', i2c_addr=None, keygen=True, **kwargs):
+def configure_device(iface='i2c', device='ecc', i2c_addr=None, keygen=True, **kwargs):
     ATCA_SUCCESS = 0x00
 
     # Loading cryptoauthlib(python specific)
@@ -77,7 +77,7 @@ def configure_device(iface='hid', device='ecc', i2c_addr=None, keygen=True, **kw
             setattr(icfg, k, int(v, 16))
 
     # Basic Raspberry Pi I2C check
-    if 'i2c' == iface and check_if_rpi():
+    if 'i2c' == iface and (check_if_rpi() or check_if_bbb()):
         cfg.cfg.atcai2c.bus = 1
 
     # Initialize the stack

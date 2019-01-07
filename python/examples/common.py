@@ -52,7 +52,7 @@ def setup_example_runner(module):
     parser = argparse.ArgumentParser(description=details, 
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    parser.add_argument('-i', '--iface', default='hid', choices=['i2c', 'hid'], help='Interface type (default: hid)')
+    parser.add_argument('-i', '--iface', default='i2c', choices=['i2c', 'hid'], help='Interface type (default: i2c)')
     parser.add_argument('-d', '--device', default='ecc', choices=['ecc', 'sha'], help='Device type (default: ecc)')
     parser.add_argument('-p', '--params', nargs='*', help='Interface Parameters in the form key=value')
 
@@ -99,3 +99,19 @@ def check_if_rpi():
         is_rpi = False
 
     return is_rpi
+
+def check_if_bbb():
+    """
+    Does a basic check to see if the script is running on a BeagleBone Black
+    """
+    is_bbb = False
+    try:
+        with open('/sys/firmware/devicetree/base/model', 'r') as f:
+            if "BeagleBone Black" in f.readline():
+                is_bbb = True
+                # print('Running on Beaglebone Black!')
+
+    except FileNotFoundError:
+        is_bbb = False
+
+    return is_bbb

@@ -40,7 +40,7 @@ read_write_config = {
 }
 
 
-def read_write(iface='hid', device='ecc', **kwargs):
+def read_write(iface='i2c', device='ecc', **kwargs):
     IO_key_slot = 4
     ATCA_SUCCESS = 0x00
 
@@ -57,7 +57,7 @@ def read_write(iface='hid', device='ecc', **kwargs):
             setattr(icfg, k, int(v, 16))
 
     # Basic Raspberry Pi I2C check
-    if 'i2c' == iface and check_if_rpi():
+    if 'i2c' == iface and (check_if_rpi() or check_if_bbb()):
         cfg.cfg.atcai2c.bus = 1
 
     # Initialize the stack

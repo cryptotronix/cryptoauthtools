@@ -35,7 +35,7 @@ import time
 ATCA_SUCCESS = 0x00
 
 
-def init_device(iface='hid', slot=0, **kwargs):
+def init_device(iface='i2c', slot=0, **kwargs):
     # Loading cryptoauthlib(python specific)
     load_cryptoauthlib()
 
@@ -49,7 +49,7 @@ def init_device(iface='hid', slot=0, **kwargs):
             setattr(icfg, k, int(v, 16))
 
     # Basic Raspberry Pi I2C check
-    if 'i2c' == iface and check_if_rpi():
+    if 'i2c' == iface and (check_if_rpi() or check_if_bbb()):
         cfg.cfg.atcai2c.bus = 1
 
     # Initialize the stack
@@ -71,7 +71,11 @@ def init_device(iface='hid', slot=0, **kwargs):
     # Get the device's public key
     public_key = bytearray(64)
     assert atcab_get_pubkey(slot, public_key) == ATCA_SUCCESS
-    
+
+    # int result = atcab_get_pubkey(slot, public_key)
+    # print('result: {}'.format(hex(result)))
+    # assert ATCA_SUCCESS == result
+
     return public_key
 
 

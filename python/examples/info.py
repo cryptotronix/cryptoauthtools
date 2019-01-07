@@ -25,7 +25,7 @@ from cryptoauthlib import *
 from common import *
 
 
-def info(iface='hid', device='ecc', **kwargs):
+def info(iface='i2c', device='ecc', **kwargs):
     ATCA_SUCCESS = 0x00
 
     # Loading cryptoauthlib(python specific)
@@ -41,8 +41,25 @@ def info(iface='hid', device='ecc', **kwargs):
             setattr(icfg, k, int(v, 16))
 
     # Basic Raspberry Pi I2C check
-    if 'i2c' == iface and check_if_rpi():
+    if 'i2c' == iface and (check_if_rpi() or check_if_bbb()):
         cfg.cfg.atcai2c.bus = 1
+
+    # # Basic BeagleBone Black I2C check
+    # if 'i2c' == iface and check_if_bbb():
+    #     # cfg.devtype = 3
+    #     cfg.cfg.atcai2c.bus = 1
+    #     # cfg.cfg.atcai2c.slave_address = 0xC0
+    #     # cfg.cfg.atcai2c.baud = 100000
+    #     pass
+    #
+    # # Print configuration settings
+    # print('iface: {}'.format(cfg.iface_type))
+    # print('devtype: {}'.format(cfg.devtype))
+    # print('slave_addr: {}'.format(hex(cfg.cfg.atcai2c.slave_address)))
+    # print('bus: {}'.format(cfg.cfg.atcai2c.bus))
+    # print('baud: {}'.format(cfg.cfg.atcai2c.baud))
+    # print('wake_delay: {}'.format(cfg.wake_delay))
+    # print('rx_retries: {}'.format(cfg.rx_retries))
 
     # Initialize the stack
     assert atcab_init(cfg) == ATCA_SUCCESS

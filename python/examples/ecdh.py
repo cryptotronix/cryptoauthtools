@@ -46,12 +46,12 @@ def ECDH(slot, iface='hid', **kwargs):
 
 
     # Basic Raspberry Pi I2C check
-    if 'i2c' == iface and check_if_rpi():
+    if 'i2c' == iface and (check_if_rpi() or check_if_bbb()):
         cfg.cfg.atcai2c.bus = 1
 
     # Initialize the stack
     assert atcab_init(cfg) == ATCA_SUCCESS
-    
+
     # Get the device type from the info command
     info = bytearray(4)
     assert atcab_info(info) == ATCA_SUCCESS
